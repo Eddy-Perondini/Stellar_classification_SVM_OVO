@@ -1,0 +1,75 @@
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+import kagglehub
+import pandas as pd 
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+from sklearn.model_selection import train_test_split 
+from stellar_classification_live import MulticlassSVM
+
+#Importando os dados para o treinamento e teste do modelo 
+
+path = kagglehub.dataset_download("fedesoriano/stellar-classification-dataset-sdss17")
+
+# print("Path to dataset files:", path)
+
+df_stellar = pd.read_csv(f'{path}/star_classification.csv')
+
+#Filtragem e normalização dos dados
+
+df_stellar_filtrado = df_stellar[df_stellar['u'] > -9999]
+
+df_galaxy = df_stellar_filtrado[df_stellar_filtrado['class'] == 'GALAXY'][:25000]
+
+df_qso = df_stellar_filtrado[df_stellar_filtrado['class'] == 'QSO']
+
+df_star = df_stellar_filtrado[df_stellar_filtrado['class'] == 'STAR']
+
+df_final = pd.concat([df_galaxy, df_qso, df_star], axis = 0)
+
+# print(df_stellar_filtrado)
+
+X = df_final.drop(columns = 'class') 
+y = df_final['class'].to_numpy()
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.30, random_state = 67)
+
+scaler = StandardScaler()
+
+X_train_norm = scaler.fit_transform(X_train)
+X_test_norm = scaler.transform(X_test)
+
+#Importando e treinando o modelos SVM OVO 
+
+model = MulticlassSVM() # ==> lr = 1e-3, lambdaparam = 1e-4, maxiter = 200 
+
+model.fit(X_train_norm, y_train)
+
+predict = model.predict(X_test_norm)
+
+# print("Shape:", X_train.shape)
+# print("Média por feature (primeiras 5):", X_train[:, :5].mean(axis=0))
+# print("Std por feature  (primeiras 5):", X_train[:, :5].std(axis=0))
+# print("Distribuição das classes:", Counter(y_train))
+# print("lambdaParam:", model.lambdaParam)
+# print("learning_rate:", model.learning_rate)
+
+#Printando os resultados da SVM OVO 
+
+print('Classification Report: \n', classification_report(y_test, predict))
+print('Accuracy Score:', accuracy_score(y_test, predict))
+
+# #Plotando a matriz de confusão
+
+cm = confusion_matrix(y_test, predict)
+
+plt.figure(figsize = (4,4))
+
+sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Blues',
+            xticklabels = ['GALAXY','QSO','STAR'],
+            yticklabels = ['GALAXY','QSO','STAR'])
+plt.xlabel('Predito')
+plt.ylabel('Real')
+plt.show()
+
+
