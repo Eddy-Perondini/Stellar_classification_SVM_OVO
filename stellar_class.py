@@ -1,4 +1,3 @@
-'''python
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 import kagglehub
@@ -72,5 +71,4 @@ sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Blues',
 plt.xlabel('Predito')
 plt.ylabel('Real')
 plt.show()
-'''
 
