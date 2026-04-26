@@ -5,12 +5,12 @@ Esse repositório tem como objetivo mostrar a criação de uma SVM do zero para 
 
 ## Potenciais melhorias 
 
-Apesar da alta acurácia de classificação proporcionada pela SVM, a estruturação do código pode ser melhorada, pois o componente de multiclassificação da SVM, por ser OVO, treina um número $\frac{n * (n-1)}{2}$ de classificadores binários. 
+Apesar da alta acurácia de classificação proporcionada pela SVM, a estruturação do código pode ser melhorada, pois o componente de multiclassificação da SVM, por ser OVO, treina um número $\bigg(\frac{n \cdot (n-1)}{2} \bigg)$ de classificadores binários. 
 Assim, o loop criado para a atualização dos pesos por parte dos classificadores binários da SVM está sendo um potencial gargalo para o modelo, levando cerca de 1 minuto e meio para ser treinado no total. 
 
 ## Treinamento 
 
- - Treino: 70% e Teste: 30% ('train_test_split()'); '$\rightarrow$' Mas, pode-se tentar kFold Cross-Validation para avaliar a mudança da performance 
+ - Treino: 70% e Teste: 30% ('train_test_split()'); $\rightarrow$ Mas, pode-se tentar kFold Cross-Validation para avaliar a mudança da performance 
   
  - O que foi aplicado para o pré-processamento do BD:
 
